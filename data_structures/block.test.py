@@ -91,6 +91,11 @@ class TestBlock(unittest.TestCase):
         print("Time it took: {} seconds".format((c-a)))
         self.assertLessEqual(toInt(b['blockHash']), target)
 
+    def test_Hash_SHA(self):
+        data = "SIG Blockchain"
+        actual = hash_SHA(data.encode())
+        self.assertIsInstance(actual, bytes)
+
 
 if __name__ == '__main__':
     unittest.main()
