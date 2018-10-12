@@ -82,7 +82,7 @@ class TestBlock(unittest.TestCase):
         data = 'testPoW'
         prevHash = '000000'
         # play around with this exponent (stick to the 60-100 range)
-        target = 10**100
+        target = 10**75
         print("Mining...")
         a = int(time.time())
         b = createBlockPoW(data, prevHash, target)
