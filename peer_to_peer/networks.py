@@ -1,106 +1,157 @@
-#
-#
-# NOTE:
-# No peer-to-peer tracker implemented; manual address parameters required
-# Not yet tested for > 1 number of connections to server
-# Incoming messages will split raw input. Just keep typing to complete the message.
-#
-#
+"""
+SIG Blockchain
+Peer-to-Peer Node class
+"""
 
-import socket
 import threading
+import socket
+import json
 
-def get_ip(): # Retrieves the IP
+
+def get_ip():
+    """
+    Gets the IP Address
+
+    :returns: ip address in string form
+    """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(('www.google.com', 80))
-    ip = s.getsockname()[0] 
-    s.close() 
+    ip = s.getsockname()[0]
+    s.close()
     return ip
 
 
 class Node:
 
-    def __init__(self):
-        self.sockets = [] # keeps a list of all sockets
-        self.integrated = threading.Event() # flag to check if we're connected
+    def __init__(self, port=9001):
+        """
+        Constructor for Node class.
+
+        :param self: references itself
+        :param port: integer port number, defaulted to 9001
+        """
+        self.ip = get_ip()
+        self.port = port
+        self.sockets = []
+        self.server = socket.socket()
+        self.server.bind(('', self.port))
+        self.edges = set()
+
+        self.integrated = threading.Event()
         self.integrated.clear()
-        self.new_message = threading.Event() # flag to check if we received a message
+        self.new_message = threading.Event()
         self.new_message.clear()
 
-    def handler(self, conn, addr): # handles incoming messages
-        while True:
-            try:
-                msg = conn.recv(1024)
-                if not msg:                
-                    raise ConnectionError # this means the connection was severed
-                print("\n<< " + msg.decode()) # print out the message
-                self.new_message.set() # set the message flag
-                self.send_message(msg, conn) # send message to everyone except the original sender
-            except (ConnectionError, OSError):
-                print("\n>> " + addr[0] + " disconnected.")
-                self.sockets.remove(conn)
-                conn.close() # remove the socket from the list
-                break
+    def listen(self):
+        """
+        Listens for connections
 
-    def disconnect(self): # disconnects from the network
-        print("\n>> Disconnecting...")
-        [s.close() for s in self.sockets]
-
-    def send_message(self, message, conn=None): # sends a message to all users
-        [s.send(message.encode()) for s in self.sockets if not s == conn]
-
-
-class Server(Node):
-
-    def __init__(self, port):
-        super().__init__()
-        self.port = port # port to listen on
-        self.listen_socket = socket.socket() # socket to listen on
-        self.listen_socket.bind(('', self.port))
-
-    def integrate(self): # listens for incoming connections
-        self.listen_socket.listen()
+        :param self: reference to self
+        """
+        self.server.listen()
         print("Listening for connections...")
-        accept_conns_thread = threading.Thread( # thread for accepting connections
+        accept_conns_thread = threading.Thread(
             target=self.accept_conns, name="Accept Connections", daemon=True)
         accept_conns_thread.start()
 
-    def accept_conns(self):
+    def handler(self, conn, addr):
+        """
+        Handles incoming communication
+
+        :param self: reference to self
+        :param conn: socket object
+        :param addr: string, int tuple representing address of other node
+        :raises ConnectionError: thrown when connection has been severed
+        """
         while True:
             try:
-                conn, addr = self.listen_socket.accept()  # <-- blocking call
+                msg = conn.recv(1024) # <-- blocking call
+                if not msg:
+                    raise ConnectionError
+                print("\n<< " + msg.decode())  # print out the message
+                self.new_message.set()
+                self.broadcast(msg, conn)
+            except (ConnectionError, OSError):
+                print("\n>> " + addr[0] + " has disconnected.")
+                self.sockets.remove(conn)
+                self.edges.remove(addr[0])
+                conn.close()  # remove the socket from the list
+                break
+
+    def accept_conns(self):
+        """
+        Accepts incoming connections
+
+        :param self: reference to self
+        """
+        while True:
+            try:
+                conn, addr = self.server.accept()  # <-- blocking call
                 print("\n" + addr[0] + " has connected.")
-                self.integrated.set() # set flag for new connection
-                self.sockets.append(conn) 
+                self.sockets.append(conn)
+                self.integrated.set()
+                self.edges.add(addr[0])
                 handler_thread = threading.Thread(
                     target=self.handler, name="Message Handler", args=(conn, addr), daemon=True)
-                handler_thread.start() # start the handler thread
+                handler_thread.start()  # start the handler thread
             except OSError:
                 pass
+            except KeyboardInterrupt:
+                self.disconnect()
+                return
 
-    def disconnect(self): # shuts down the listening socket
-        super().disconnect()
-        self.listen_socket.close()
+    def check_edges(self, ip):
+        """
+        Checks to see if there exists a connection to this ip
 
+        :param self: reference to self
+        :param ip: string that represents the ip address
+        """
+        print("Checking for edges...")
+        for e in self.edges:
+            if ip == e:
+                return True
+        return False
 
-class Client(Node):
+    def connect_to_peer(self, addr):
+        """
+        Connects to the peer at the address specified
 
-    def __init__(self):
-        super().__init__()
-
-    def integrate(self, peer): # connects to a peer
+        :param self: reference to self
+        :param addr: string, int tuple representing the ip and port
+        """
+        if self.check_edges(addr[0]):
+            print("Existing edge to %s" % (addr[0]))
+            return
         try:
             conn = socket.socket()
-            ip = peer['ip']
-            port = peer['port']
-            addr = ip, port
-            print("Attempting to connect to %s on port %d" %(ip, port))
+            print("Attempting to connect to %s on port %d..." % (addr))
             conn.connect(addr)
-            self.integrated.set() # set the connection flag
             self.sockets.append(conn)
+            self.integrated.set()
+            self.edges.add(addr[0])
             handler_thread = threading.Thread(
                 target=self.handler, name="Message Handler", args=(conn, addr), daemon=True)
-            handler_thread.start() # start the handler thread
+            handler_thread.start()  # start the handler thread
         except ConnectionError:
-            print("Failed to connect to %s" %(ip))
+            print("Failed to connect to %s" % (addr[0]))
             conn.close()
+
+    def broadcast(self, message, exc=None):
+        """
+        Broadcasts a message to all connections, with one possibly excluded.
+
+        :param self: reference to self
+        :param message: byte string message to be sent
+        :param exc: socket object defaulted to None, will not broadcast to it
+        """
+        [s.send(message) for s in self.sockets if not s == exc]
+
+    def disconnect(self):
+        """
+        Shuts down all sockets.
+
+        :param self: reference to self
+        """
+        [s.close() for s in self.sockets]
+        self.server.close()
