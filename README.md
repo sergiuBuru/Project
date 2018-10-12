@@ -8,3 +8,4 @@ The three sections we will first learn about are data structures, peer-to-peer n
 Three areas of focus when building are: User Interface, Scale, and Network.
 
 -author: Karol Stolarski
+-date: Oct 12, 2018
