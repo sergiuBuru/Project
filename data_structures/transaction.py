@@ -7,6 +7,10 @@ import ecdsa
 def to_string(bytes):
     return hexlify(bytes).decode()
 
+"""
+Transactions
+"""
+
 
 def create_transaction(previous_tx, private_key, value, recipient=None):
     public_key = generate_public_key(private_key)
