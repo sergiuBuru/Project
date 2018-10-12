@@ -82,7 +82,7 @@ class TestBlock(unittest.TestCase):
         data = 'testPoW'
         prevHash = '000000'
         # play around with this exponent (stick to the 60-100 range)
-        target = 10**100
+        target = 10**75
         print("Mining...")
         a = int(time.time())
         b = createBlockPoW(data, prevHash, target)
@@ -90,6 +90,11 @@ class TestBlock(unittest.TestCase):
         c = int(time.time())
         print("Time it took: {} seconds".format((c-a)))
         self.assertLessEqual(toInt(b['blockHash']), target)
+
+    def test_Hash_SHA(self):
+        data = "SIG Blockchain"
+        actual = hash_SHA(data.encode())
+        self.assertIsInstance(actual, bytes)
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 from hashlib import sha256 as sha
 from binascii import hexlify, unhexlify
 from time import time
+from struct import pack
 
 # hash function
 # takes in a string
@@ -89,13 +90,13 @@ def toInt(bytestring):
 def createBlockPoW(data, prevHash, target):
     nonce = 0
     timestamp = int(time())
-    blockHash = hashSHA(data + prevHash + str(timestamp) +
+    blockHash = hashSHA(prevHash + data + str(timestamp) +
                         str(target) + str(nonce))
     while not toInt(blockHash) < target:
         nonce += 1
         timestamp = int(time())
-        blockHash = hashSHA(
-            data + prevHash + str(timestamp) + str(target) + str(nonce))
+        blockHash = hashSHA(prevHash + data + str(timestamp) +
+                            str(target) + str(nonce))
     return {
         'prevHash': prevHash,
         'data': data,
@@ -104,3 +105,14 @@ def createBlockPoW(data, prevHash, target):
         'nonce': nonce,
         'blockHash': blockHash
     }
+
+############################################################################
+############################ NEW CODE BELOW HERE ###########################
+############################################################################
+
+def hash_SHA(byte_string): 
+    return hexlify(sha(byte_string).digest())
+
+
+
+
