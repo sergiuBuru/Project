@@ -126,4 +126,28 @@ def int_to_bytes(val):
     :return: integer i in byte form as unsigned int.
     """
     return pack('I', val)
+
+def short_to_bytes(val):
+    """
+    Given an short i, return it in byte form, as an unsiged short 
+    Will only work for positive shorts. 
+    Max value accepted is 2^8 - 1 or 65535
+    Basically any valid positive 8 bit int will work 
     
+    :param val: short i 
+    :return: short i in byte form as unsigned short.
+    """
+    return pack('H', val)
+
+def long_to_bytes(val):
+    """
+    Given an long i, return it in byte form, as an unsiged long 
+    Will only work for positive longs. 
+    Max value accepted is 2^32 - 1 or 4,294,967,295
+    Basically any valid positive 8 bit int will work 
+    
+    :param val: long i 
+    :return: long i in byte form as unsigned long.
+    """
+    return pack('L', val)
+ 
