@@ -2,6 +2,7 @@
 import unittest
 from block import *
 import time
+from struct import unpack
 
 # unit test class
 
@@ -96,6 +97,23 @@ class TestBlock(unittest.TestCase):
         actual = hash_SHA(data.encode())
         self.assertIsInstance(actual, bytes)
 
+    def test_int_to_bytes(self):
+        """
+        Tests out values for the int_to_bytes function. Tests out max values as well
+        """
+        byte1 = int_to_bytes(1) 
+        #if we unpack the bytes as a unsigned integer, we should get the same value
+        self.assertEqual(unpack('I', byte1)[0], 1)
+        #test out 0
+        byte0 = int_to_bytes(0) 
+        self.assertEqual(unpack('I', byte0)[0], 0)
+        #test out max signed 32 bit int
+        byte_max_32 = int_to_bytes(2**31 -1)
+        self.assertEqual(unpack('I', byte_max_32)[0], 2**31 -1)
+        #test out max unsigned 32 bit int 
+        byte_max_u32 = int_to_bytes(2**32 -1)
+        self.assertEqual(unpack('I', byte_max_u32)[0], 2**32 -1)
+        
 
 if __name__ == '__main__':
     unittest.main()
