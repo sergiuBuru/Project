@@ -143,11 +143,11 @@ def long_to_bytes(val):
     """
     Given an long i, return it in byte form, as an unsiged long 
     Will only work for positive longs. 
-    Max value accepted is 2^64 - 1 or 18,446,744,073,709,551,615
+    Max value accepted is 2^32 - 1 or 4,294,967,295
     Basically any valid positive 8 bit int will work 
     
     :param val: long i 
     :return: long i in byte form as unsigned long.
     """
-    return pack('Q', val)
+    return pack('L', val)
  

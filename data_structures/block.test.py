@@ -134,13 +134,13 @@ class TestBlock(unittest.TestCase):
         """
         byte1 = long_to_bytes(1) 
         #if we unpack the bytes as a unsigned integer, we should get the same value
-        self.assertEqual(unpack('Q', byte1)[0], 1)
+        self.assertEqual(unpack('L', byte1)[0], 1)
         #test out 0
         byte0 = long_to_bytes(0) 
-        self.assertEqual(unpack('Q', byte0)[0], 0)
-        #test out max unsigned 64 bit int 
-        byte_max_long = long_to_bytes(2**64 -1)
-        self.assertEqual(unpack('Q', byte_max_long)[0], 2**64 -1)
+        self.assertEqual(unpack('L', byte0)[0], 0)
+        #test out max unsigned 32 bit int 
+        byte_max_long = long_to_bytes(2**32 -1)
+        self.assertEqual(unpack('L', byte_max_long)[0], 2**32 -1)
 
 if __name__ == '__main__':
     unittest.main()
