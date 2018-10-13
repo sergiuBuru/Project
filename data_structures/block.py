@@ -114,8 +114,16 @@ def hash_SHA(byte_string):
     return hexlify(sha(byte_string).digest())
     
 
-#get the byte form of the val (which is a signed int) in the form of an unsigned int
-#NOTE: negative numbers are not supported 
+
 def int_to_bytes(val):
-        return pack('I', val)
+    """
+    Given an integer i, return it in byte form, as an unsiged int 
+    Will only work for positive ints. 
+    Max value accepted is 2^32 - 1 or 4,294,967,295
+    Basically any valid positive 32 bit int will work 
+    
+    :param val: integer i 
+    :return: integer i in byte form as unsigned int.
+    """
+    return pack('I', val)
     

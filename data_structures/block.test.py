@@ -98,6 +98,9 @@ class TestBlock(unittest.TestCase):
         self.assertIsInstance(actual, bytes)
 
     def test_int_to_bytes(self):
+        """
+        Tests out values for the int_to_bytes function. Tests out max values as well
+        """
         byte1 = int_to_bytes(1) 
         #if we unpack the bytes as a unsigned integer, we should get the same value
         self.assertEqual(unpack('I', byte1)[0], 1)
