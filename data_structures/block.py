@@ -112,7 +112,10 @@ def createBlockPoW(data, prevHash, target):
 
 def hash_SHA(byte_string): 
     return hexlify(sha(byte_string).digest())
+    
 
-
-
-
+#get the byte form of the val (which is a signed int) in the form of an unsigned int
+#NOTE: negative numbers are not supported 
+def int_to_bytes(val):
+        return pack('I', val)
+    
