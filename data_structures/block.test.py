@@ -179,6 +179,43 @@ class TestBlock(unittest.TestCase):
         print("Expected Result: " + str(convert))
         print("Result: " + str(bytes_to_long(byte_s)))
         self.assertEqual(convert, bytes_to_long(byte_s))
+    
+        def test_time_now(self):
+        curr_time = time.time()
+        print("Float Time: " + str(curr_time))
+        int_time = int(curr_time)
+        print("Integer Time:  " + str(time_now()))
+        self.assertEqual(int_time, time_now())
 
+    def test_less_than_target(self):
+        target = 30
+        test_bs = hexlify(bytes([20]))
+        print("Target: " + str(target))
+        print("From Byte: " + str(toInt(test_bs)))
+        self.assertTrue(less_than_target(test_bs, target))
+
+    def test_bytes_to_int(self):
+        convert = 20
+        byte_s = pack('I', convert)
+        print("Byte String: " + str(convert))
+        print("Expected Result: " + str(convert))
+        print("Result: " + str(bytes_to_int(byte_s)))
+        self.assertEqual(convert, bytes_to_int(byte_s))
+
+    def test_bytes_to_short(self):
+        convert = 30
+        byte_s = pack('H', convert)
+        print("Byte String: " + str(convert))
+        print("Expected Result: " + str(convert))
+        print("Result: " + str(bytes_to_short(byte_s)))
+        self.assertEqual(convert, bytes_to_short(byte_s))
+
+    def test_bytes_to_long(self):
+        convert = 40
+        byte_s = pack('L', convert)
+        print("Byte String: " + str(convert))
+        print("Expected Result: " + str(convert))
+        print("Result: " + str(bytes_to_long(byte_s)))
+        self.assertEqual(convert, bytes_to_long(byte_s))
 if __name__ == '__main__':
 unittest.main()
