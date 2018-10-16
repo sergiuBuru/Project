@@ -150,4 +150,48 @@ def long_to_bytes(val):
     :return: long i in byte form as unsigned long.
     """
     return pack('L', val)
- 
+
+def time_now():
+    """
+    This function takes the current time and returns it as an integer
+
+    :returns: an integer, representing the current system time.
+    """
+    return int(time())
+
+def less_than_target(byte_string, target):
+    """
+    This funciton determines which of a byte string holding an integer, or a target integer is lesser.
+
+    :param1 byte_string: a byte string intended to hold an integer
+    :param2 targer: an integer, a target to which byte_string is compared  
+    :returns: a boolean, true if the byte_string integer is less than target. false otherwise
+    """
+    return (toInt(hexlify(byte_string)) < target)
+
+def bytes_to_int(byte_string):
+    """
+    This function intends to convert a four byte string into an unsinged integer
+
+    :param1 byte_string: a byte string, assumed to be four bytes, holding an integer
+    :returns: an unsinged integer, drawn from byte_string
+    """
+    return unpack('I', byte_string)[0]
+
+def bytes_to_short(byte_string):
+    """
+    This function intends to convert a four byte string into an unsigned short integer
+
+    :param1 byte_string: a byte string, assumed to be four bytes, holding an integer
+    :returns: an unsinged short integer, drawn from byte_string
+    """
+    return unpack('H', byte_string)[0]
+
+def bytes_to_long(byte_string):
+    """
+    This function intends to convert a four byte string into an unsigned long integer
+
+    :param1 byte_string: a byte string, assumed to be four bytes, holding an integer
+    :returns: an unigned long integer, drawn from byte_string
+    """
+    return unpack('L', byte_string)[0]

@@ -142,5 +142,53 @@ class TestBlock(unittest.TestCase):
         byte_max_long = long_to_bytes(2**32 -1)
         self.assertEqual(unpack('L', byte_max_long)[0], 2**32 -1)
 
+    # Tests time_now() by printing the current time, converting it
+    # to an int manually, and comparing it to the output of time_now
+    def test_time_now(self):
+        curr_time = time.time()
+        print("Float Time: " + str(curr_time))
+        int_time = int(curr_time)
+        print("Integer Time:  " + str(time_now()))
+        self.assertEqual(int_time, time_now())
+
+    # Converts a known value to a bytestring and manually converts to string
+    # Compares to output of less_than_target with known greater value
+    def test_less_than_target(self):
+        target = 30
+        test_bs = hexlify(bytes([20]))
+        print("Target: " + str(target))
+        print("From Byte: " + str(toInt(test_bs)))
+        self.assertTrue(less_than_target(unhexlify(test_bs), target))
+
+    # Converts a known value to a byte string, manually converts it back into an
+    # integer, compares this integer to the output of bytes_to_int()
+    def test_bytes_to_int(self):
+        convert = 20
+        byte_s = pack('I', convert)
+        print("Byte String: " + str(convert))
+        print("Expected Result: " + str(convert))
+        print("Result: " + str(bytes_to_int(byte_s)))
+        self.assertEqual(convert, bytes_to_int(byte_s))
+
+    # Converts a known value to a byte string, manually converts it back into an
+    # integer, compares this integer to the output of bytes_to_int()
+    def test_bytes_to_short(self):
+        convert = 30
+        byte_s = pack('H', convert)
+        print("Byte String: " + str(convert))
+        print("Expected Result: " + str(convert))
+        print("Result: " + str(bytes_to_short(byte_s)))
+        self.assertEqual(convert, bytes_to_short(byte_s))
+
+    # Converts a known value to a byte string, manually converts it back into an
+    # integer, compares this integer to the output of bytes_to_int()
+    def test_bytes_to_long(self):
+        convert = 40
+        byte_s = pack('L', convert)
+        print("Byte String: " + str(convert))
+        print("Expected Result: " + str(convert))
+        print("Result: " + str(bytes_to_long(byte_s)))
+        self.assertEqual(convert, bytes_to_long(byte_s))
+        
 if __name__ == '__main__':
     unittest.main()
