@@ -149,7 +149,7 @@ def long_to_bytes(val):
     :param val: long i 
     :return: long i in byte form as unsigned long.
     """
-return pack('L', val)
+    return pack('L', val)
 
 def time_now():
     """
@@ -167,10 +167,7 @@ def less_than_target(byte_string, target):
     :param2 targer: an integer, a target to which byte_string is compared  
     :returns: a boolean, true if the byte_string integer is less than target. false otherwise
     """
-    out = False
-    if (toInt(byte_string) < target):
-        out = True
-    return out
+    return (toInt(hexlify(byte_string)) < target)
 
 def bytes_to_int(byte_string):
     """
