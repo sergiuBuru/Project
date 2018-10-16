@@ -2,7 +2,7 @@
 from hashlib import sha256 as sha
 from binascii import hexlify, unhexlify
 from time import time
-from struct import pack
+from struct import pack, unpack
 
 # hash function
 # takes in a string
@@ -167,7 +167,7 @@ def less_than_target(byte_string, target):
     :param2 targer: an integer, a target to which byte_string is compared  
     :returns: a boolean, true if the byte_string integer is less than target. false otherwise
     """
-    return (toInt(hexlify(byte_string)) < target)
+    return toInt(byte_string) < target
 
 def bytes_to_int(byte_string):
     """

@@ -158,7 +158,7 @@ class TestBlock(unittest.TestCase):
         test_bs = hexlify(bytes([20]))
         print("Target: " + str(target))
         print("From Byte: " + str(toInt(test_bs)))
-        self.assertTrue(less_than_target(unhexlify(test_bs), target))
+        self.assertTrue(less_than_target(test_bs, target))
 
     # Converts a known value to a byte string, manually converts it back into an
     # integer, compares this integer to the output of bytes_to_int()
