@@ -2,6 +2,7 @@
 from hashlib import sha256 as sha
 from binascii import hexlify, unhexlify
 from time import time
+from struct import pack, unpack
 
 # hash function
 # takes in a string
@@ -89,13 +90,13 @@ def toInt(bytestring):
 def createBlockPoW(data, prevHash, target):
     nonce = 0
     timestamp = int(time())
-    blockHash = hashSHA(data + prevHash + str(timestamp) +
+    blockHash = hashSHA(prevHash + data + str(timestamp) +
                         str(target) + str(nonce))
     while not toInt(blockHash) < target:
         nonce += 1
         timestamp = int(time())
-        blockHash = hashSHA(
-            data + prevHash + str(timestamp) + str(target) + str(nonce))
+        blockHash = hashSHA(prevHash + data + str(timestamp) +
+                            str(target) + str(nonce))
     return {
         'prevHash': prevHash,
         'data': data,
@@ -104,3 +105,93 @@ def createBlockPoW(data, prevHash, target):
         'nonce': nonce,
         'blockHash': blockHash
     }
+
+############################################################################
+############################ NEW CODE BELOW HERE ###########################
+############################################################################
+
+def hash_SHA(byte_string): 
+    return hexlify(sha(byte_string).digest())
+    
+
+
+def int_to_bytes(val):
+    """
+    Given an integer i, return it in byte form, as an unsiged int 
+    Will only work for positive ints. 
+    Max value accepted is 2^32 - 1 or 4,294,967,295
+    Basically any valid positive 32 bit int will work 
+    
+    :param val: integer i 
+    :return: integer i in byte form as unsigned int.
+    """
+    return pack('I', val)
+
+def short_to_bytes(val):
+    """
+    Given an short i, return it in byte form, as an unsiged short 
+    Will only work for positive shorts. 
+    Max value accepted is 2^8 - 1 or 65535
+    Basically any valid positive 8 bit int will work 
+    
+    :param val: short i 
+    :return: short i in byte form as unsigned short.
+    """
+    return pack('H', val)
+
+def long_to_bytes(val):
+    """
+    Given an long i, return it in byte form, as an unsiged long 
+    Will only work for positive longs. 
+    Max value accepted is 2^32 - 1 or 4,294,967,295
+    Basically any valid positive 8 bit int will work 
+    
+    :param val: long i 
+    :return: long i in byte form as unsigned long.
+    """
+    return pack('L', val)
+
+def time_now():
+    """
+    This function takes the current time and returns it as an integer
+
+    :returns: an integer, representing the current system time.
+    """
+    return int(time())
+
+def less_than_target(byte_string, target):
+    """
+    This funciton determines which of a byte string holding an integer, or a target integer is lesser.
+
+    :param1 byte_string: a byte string intended to hold an integer
+    :param2 targer: an integer, a target to which byte_string is compared  
+    :returns: a boolean, true if the byte_string integer is less than target. false otherwise
+    """
+    return toInt(byte_string) < target
+
+def bytes_to_int(byte_string):
+    """
+    This function intends to convert a four byte string into an unsinged integer
+
+    :param1 byte_string: a byte string, assumed to be four bytes, holding an integer
+    :returns: an unsinged integer, drawn from byte_string
+    """
+    return unpack('I', byte_string)[0]
+
+def bytes_to_short(byte_string):
+    """
+    This function intends to convert a four byte string into an unsigned short integer
+
+    :param1 byte_string: a byte string, assumed to be four bytes, holding an integer
+    :returns: an unsinged short integer, drawn from byte_string
+    """
+    return unpack('H', byte_string)[0]
+
+def bytes_to_long(byte_string):
+    """
+    This function intends to convert a four byte string into an unsigned long integer
+
+    :param1 byte_string: a byte string, assumed to be four bytes, holding an integer
+    :returns: an unigned long integer, drawn from byte_string
+    """
+    return unpack('L', byte_string)[0]
