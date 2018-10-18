@@ -189,6 +189,17 @@ class TestBlock(unittest.TestCase):
         print("Expected Result: " + str(convert))
         print("Result: " + str(bytes_to_long(byte_s)))
         self.assertEqual(convert, bytes_to_long(byte_s))
+
+    # Gets the log of a given whole number of base 10 and converts it into bytes
+    # Uses short_to_bytes function for byte conversion
+    def test_log_target_bytes(self):
+        convert = 10000             #10^4
+        byte_form = log_target_bytes(convert)
+        print("Converting: ", convert, " Written as: 10^4")
+        print("Bytes using function: ", byte_form)
+        print("Reverting to get log: ", int.from_bytes(byte_form,byteorder = 'little'))
+        self.assertEqual(convert, pow(10,int.from_bytes(byte_form,byteorder = 'little')))
+
         
 if __name__ == '__main__':
     unittest.main()
